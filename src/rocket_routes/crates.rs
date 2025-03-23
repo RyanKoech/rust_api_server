@@ -17,7 +17,10 @@ pub async fn get_crates(mut db: Connection<DbConn>) -> Result<Value, Custom<Valu
 pub async fn view_crate(mut db: Connection<DbConn>, id: i32) -> Result<Value, Custom<Value>> {
     CrateRepository::find(&mut db, id).await
         .map(|a_crate| json!(a_crate))
-        .map_err(|e| server_error(e.into()))
+        .map_err(|e| match e {
+            diesel::result::Error::NotFound => Custom(Status::NotFound, json!("Not found")),
+            _ => server_error(e.into())
+        })
 }
 
 #[rocket::post("/crates", format="json", data="<new_crate>")]

@@ -32,14 +32,14 @@ pub fn create_test_crate(client: &Client, rustacean: &Value) -> Value {
    response.json().unwrap()
 }
 
-pub fn delete_test_rustacean(client: &Client, rustacean: Value) {
+pub fn delete_test_rustacean(client: &Client, rustacean: &Value) {
     let response = client.delete(format!("{}/rustaceans/{}", APP_HOST, rustacean["id"]))
         .send()
         .unwrap();
     assert_eq!(response.status(), StatusCode::NO_CONTENT);
 }
 
-pub fn delete_test_crate(client: &Client, a_crate: Value) {
+pub fn delete_test_crate(client: &Client, a_crate: &Value) {
     let response = client.delete(format!("{}/crates/{}", APP_HOST, a_crate["id"]))
         .send()
         .unwrap();

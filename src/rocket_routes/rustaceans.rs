@@ -25,7 +25,10 @@ pub async fn get_rustaceans(mut db: Connection<DbConn>) -> Result<Value, Custom<
 pub async fn view_rustacean(mut db: Connection<DbConn>, id: i32) -> Result<Value, Custom<Value>> {
     RustaceanRepository::find(&mut db, id).await
         .map(|rustacean| json!(rustacean))
-        .map_err(|e| server_error(e.into()))
+        .map_err(|e| match e {
+            diesel::result::Error::NotFound => Custom(Status::NotFound, json!("Not found")),
+            _ => server_error(e.into())
+        })
 }
 
 #[rocket::post("/rustaceans", format="json", data="<new_rustacean>")]

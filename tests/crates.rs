@@ -20,9 +20,9 @@ fn test_get_crates() {
     assert!(json.as_array().unwrap().contains(&b_crate));
 
     // Cleanup
-    common::delete_test_crate(&client, a_crate);
-    common::delete_test_crate(&client, b_crate);
-    common::delete_test_rustacean(&client, rustacean);
+    common::delete_test_crate(&client, &a_crate);
+    common::delete_test_crate(&client, &b_crate);
+    common::delete_test_rustacean(&client, &rustacean);
 }
 
 #[test]
@@ -56,8 +56,8 @@ fn test_create_crate() {
     }));
 
     // Cleanup
-    common::delete_test_crate(&client, a_crate);
-    common::delete_test_rustacean(&client, rustacean);
+    common::delete_test_crate(&client, &a_crate);
+    common::delete_test_rustacean(&client, &rustacean);
 }
 
 #[test]
@@ -85,8 +85,16 @@ fn test_view_crate() {
     }));
 
     // Cleanup
-    common::delete_test_crate(&client, a_crate);
-    common::delete_test_rustacean(&client, rustacean);
+    common::delete_test_crate(&client, &a_crate);
+
+    let response = client
+    .get(format!("{}/crates/{}", common::APP_HOST, a_crate["id"]))
+    .send()
+    .unwrap();
+    
+    assert_eq!(response.status(), StatusCode::NOT_FOUND);
+
+    common::delete_test_rustacean(&client, &rustacean);
 }
 
 #[test]
@@ -146,9 +154,9 @@ fn test_update_crate() {
     }));
 
     // Cleanup
-    common::delete_test_crate(&client, a_crate);
-    common::delete_test_rustacean(&client, rustacean);
-    common::delete_test_rustacean(&client, rustacean2);
+    common::delete_test_crate(&client, &a_crate);
+    common::delete_test_rustacean(&client, &rustacean);
+    common::delete_test_rustacean(&client, &rustacean2);
 }
 
 #[test]
@@ -165,5 +173,5 @@ fn test_delete_crate() {
     assert_eq!(response.status(), StatusCode::NO_CONTENT);
 
     // Cleanup
-    common::delete_test_rustacean(&client, rustacean);
+    common::delete_test_rustacean(&client, &rustacean);
 }

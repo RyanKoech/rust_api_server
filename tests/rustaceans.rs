@@ -18,8 +18,8 @@ fn test_get_rustaceans() {
     assert!(json.as_array().unwrap().contains(&rustacean2));
 
     // Cleanup
-    common::delete_test_rustacean(&client, rustacean1);
-    common::delete_test_rustacean(&client, rustacean2);
+    common::delete_test_rustacean(&client, &rustacean1);
+    common::delete_test_rustacean(&client, &rustacean2);
 }
 
 #[test]
@@ -42,7 +42,7 @@ fn test_create_rustacean() {
         "created_at": rustacean["created_at"],
     }));
 
-    common::delete_test_rustacean(&client, rustacean);
+    common::delete_test_rustacean(&client, &rustacean);
 }
 
 #[test]
@@ -62,7 +62,14 @@ fn test_view_rustacean() {
         "created_at": rustacean["created_at"],
     }));
 
-    common::delete_test_rustacean(&client, rustacean);
+    common::delete_test_rustacean(&client, &rustacean);
+
+    let response = client
+    .get(format!("{}/rustaceans/{}", common::APP_HOST, rustacean["id"]))
+    .send()
+    .unwrap();    
+    
+    assert_eq!(response.status(), StatusCode::NOT_FOUND);
 }
 
 #[test]
@@ -86,7 +93,7 @@ fn test_update_rustacean() {
         "created_at": rustacean["created_at"],
     }));
 
-    common::delete_test_rustacean(&client, rustacean);
+    common::delete_test_rustacean(&client, &rustacean);
 }
 
 #[test]
