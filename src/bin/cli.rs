@@ -1,4 +1,4 @@
-use clap::{Command, Arg};
+use clap::{Command, Arg, value_parser};
 
 extern crate cr8ts;
 
@@ -28,7 +28,7 @@ async fn main() {
                     Command::new("delete")
                         .about("Delete user by ID")
                         .arg_required_else_help(true)
-                        .arg(Arg::new("id").required(true))
+                        .arg(Arg::new("id").required(true).value_parser(value_parser!(i32)))
                 )
         )
         .get_matches();
@@ -41,9 +41,9 @@ async fn main() {
             sub_matches.get_many::<String>("roles").unwrap().map(|v| v.to_owned()).collect(),
           ).await,
           Some(("list", _)) => cr8ts::commands::list_users().await,
-          Some(("delete", _)) => cr8ts::commands::delete_user(
-              sub_matches.get_one::<i32>("username").unwrap().to_owned(),
-          ).await,
+          Some(("delete", sub_matches)) => cr8ts::commands::delete_user(
+            sub_matches.get_one::<i32>("id").unwrap().to_owned(),
+        ).await,
             _ => {},
         },
         _ => {},
