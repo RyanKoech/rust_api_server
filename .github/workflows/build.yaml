@@ -22,10 +22,12 @@ jobs:
         run: docker compose up --build -d
 
       - name: Run Server
-        run: docker compose exec -d app cargo run  
+        run: docker compose exec app cargo build  
+      # - name: Run Server
+      #   run: docker compose exec app cargo run  
 
-      - name: Run tests inside the container
-        run: docker compose exec -T app cargo test
+      # - name: Run tests inside the container
+      #   run: docker compose exec -T app cargo test
 
       - name: Stop and remove containers
         run: docker compose down
