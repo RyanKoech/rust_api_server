@@ -22,7 +22,7 @@ jobs:
         run: docker compose up --build -d
 
       - name: Run tests inside the container
-        run: docker compose exec -T rust_app cargo test
+        run: docker compose exec -T app cargo test
 
       - name: Stop and remove containers
         run: docker compose down
