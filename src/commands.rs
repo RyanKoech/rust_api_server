@@ -1,10 +1,12 @@
+use std::str::FromStr;
+
 use crate::auth;
 use argon2::PasswordHasher;
 use argon2::password_hash::SaltString;
 use argon2::password_hash::rand_core::OsRng;
 use diesel_async::{AsyncPgConnection, AsyncConnection};
 
-use crate::models::NewUser;
+use crate::models::{NewUser, RoleCode};
 use crate::repositories::{UserRepository, RoleRepository};
 
 
@@ -20,7 +22,8 @@ pub async fn create_user(username: String, password: String, role_codes: Vec<Str
     let password_hash = auth::hash_password(password).unwrap();
     let new_user = NewUser { username, password: password_hash };
 
-    let user = UserRepository::create(&mut c, new_user, role_codes).await.unwrap();
+    let role_enums = role_codes.iter().map(|v| RoleCode::from_str(v.as_str()).unwrap()).collect();
+    let user = UserRepository::create(&mut c, new_user, role_enums).await.unwrap();
     println!("User created {:?}", user);
     let roles = RoleRepository::find_by_user(&mut c, &user).await.unwrap();
     println!("Roles assigned {:?}", roles);
