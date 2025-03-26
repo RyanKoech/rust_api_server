@@ -1,5 +1,6 @@
 use std::error::Error;
-use rocket::Request;
+use rocket::{Request, Response};
+use rocket::fairing::{Fairing, Info, Kind};
 use rocket::http::Status;
 use rocket::request::{FromRequest, Outcome};
 use rocket::response::status::Custom;
@@ -86,6 +87,32 @@ impl<'r> FromRequest<'r> for EditorUser {
     }
 
   }
+
+  #[rocket::options("/<_route_args..>")]
+pub fn options(_route_args: Option<std::path::PathBuf>) {
+    // Just to add CORS header via the fairing.
+}
+
+pub struct Cors;
+
+#[rocket::async_trait]
+impl Fairing for Cors {
+    fn info(&self) -> Info {
+        Info {
+            name: "Append CORS headers in responses",
+            kind: Kind::Response
+        }
+    }
+
+    async fn on_response<'r>(&self, _req: &'r Request<'_>, res: &mut Response<'r>) {
+        res.set_raw_header("Access-Control-Allow-Origin", "*");
+        res.set_raw_header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+        res.set_raw_header("Access-Control-Allow-Headers", "*");
+        res.set_raw_header("Access-Control-Allow-Credentials", "true");
+    }
+}
+
+
 
 // docker-compose logs -f app
 // docker-compose exec app cargo run
