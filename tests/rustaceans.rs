@@ -8,7 +8,7 @@ pub mod common;
 fn test_get_rustaceans() {
 
     // Setup
-    let client = common::get_client_with_logged_in_admin();
+    let client = common::get_client_with_logged_in_viewer();
     let rustacean1 = common::create_test_rustacean(&client);
     let rustacean2 = common::create_test_rustacean(&client);
 
