@@ -21,6 +21,9 @@ jobs:
       - name: Build and start services with Docker Compose
         run: docker compose up --build -d
 
+      - name: Run Server
+        run: docker compose exec -d app cargo run  
+
       - name: Run tests inside the container
         run: docker compose exec -T app cargo test
 
