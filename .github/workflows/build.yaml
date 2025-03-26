@@ -1,0 +1,28 @@
+name: Build and Test Rust App
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and start services with Docker Compose
+        run: docker-compose up --build -d
+
+      - name: Run tests inside the container
+        run: docker-compose exec -T rust_app cargo test
+
+      - name: Stop and remove containers
+        run: docker-compose down
